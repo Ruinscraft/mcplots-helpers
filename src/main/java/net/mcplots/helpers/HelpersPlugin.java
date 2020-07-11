@@ -25,11 +25,11 @@ public class HelpersPlugin extends JavaPlugin {
 
         // setup PlotGiveHistory
         {
-            String host = getConfig().getString("");
-            int port = getConfig().getInt("");
-            String database = getConfig().getString("");
-            String username = getConfig().getString("");
-            String password = getConfig().getString("");
+            String host = getConfig().getString("plot-give-history.mysql.host");
+            int port = getConfig().getInt("plot-give-history.mysql.port");
+            String database = getConfig().getString("plot-give-history.mysql.database");
+            String username = getConfig().getString("plot-give-history.mysql.username");
+            String password = getConfig().getString("plot-give-history.mysql.password");
 
             plotGiveHistory = new MySQLPlotGiveHistory(host, port, database, username, password);
         }
