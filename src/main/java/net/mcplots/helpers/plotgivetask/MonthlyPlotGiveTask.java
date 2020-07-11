@@ -1,24 +1,25 @@
-package net.mcplots.helpers.timedplots;
+package net.mcplots.helpers.plotgivetask;
 
 import net.mcplots.helpers.HelpersPlugin;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import java.io.*;
 import java.time.LocalDate;
 import java.util.Scanner;
 import java.util.concurrent.CompletableFuture;
 
 public class MonthlyPlotGiveTask extends PlotGiveTask {
 
-    private int lastMonthRun;
-
     private HelpersPlugin plugin;
 
     public MonthlyPlotGiveTask(HelpersPlugin plugin) {
         super(plugin);
         this.plugin = plugin;
+    }
+
+    @Override
+    public void run() {
+        super.run();
+        updateLastMonthRun();
     }
 
     @Override
@@ -58,6 +59,28 @@ public class MonthlyPlotGiveTask extends PlotGiveTask {
             }
 
             return -1;
+        });
+    }
+
+    public CompletableFuture<Void> updateLastMonthRun() {
+        return CompletableFuture.runAsync(() -> {
+            File file = new File(plugin.getDataFolder(), "monthly-plot-give-last-month.txt");
+
+            if (!file.exists()) {
+                try {
+                    file.createNewFile();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            LocalDate now = LocalDate.now();
+
+            try (FileWriter fileWriter = new FileWriter(file)) {
+                fileWriter.write(now.getMonth().getValue());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         });
     }
 

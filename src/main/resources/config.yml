@@ -1,4 +1,4 @@
-plot-give-history:
+monthly-plot-give-history:
   mysql:
     host: localhost
     port: 3306

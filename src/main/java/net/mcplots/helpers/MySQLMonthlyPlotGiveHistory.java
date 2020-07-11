@@ -1,4 +1,4 @@
-package net.mcplots.helpers.timedplots;
+package net.mcplots.helpers;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
-public class MySQLPlotGiveHistory implements PlotGiveHistory {
+public class MySQLMonthlyPlotGiveHistory implements MonthlyPlotGiveHistory {
 
     private String host;
     private int port;
@@ -14,20 +14,19 @@ public class MySQLPlotGiveHistory implements PlotGiveHistory {
     private String username;
     private String password;
 
-    public MySQLPlotGiveHistory(String host, int port, String database, String username, String password) {
+    public MySQLMonthlyPlotGiveHistory(String host, int port, String database, String username, String password) {
         this.host = host;
         this.port = port;
         this.database = database;
         this.username = username;
         this.password = password;
 
-        // create table
         CompletableFuture.runAsync(() -> {
             try (Connection connection = getConnection()) {
                 try (Statement statement = connection.createStatement()) {
-                    statement.execute("CREATE TABLE IF NOT EXISTS plot_give_notifications (" +
+                    statement.execute("CREATE TABLE IF NOT EXISTS monthly_plot_give_history (" +
                             "mojang_id VARCHAR(36) NOT NULL, " +
-                            "time_of_plot_give BIGINT NOT NULL);");
+                            "time BIGINT NOT NULL);");
                 }
             } catch (SQLException e) {
                 e.printStackTrace();
@@ -36,20 +35,19 @@ public class MySQLPlotGiveHistory implements PlotGiveHistory {
     }
 
     @Override
-    public CompletableFuture<List<PlotGiveNotification>> getNotifications(UUID mojangId) {
+    public CompletableFuture<List<Long>> getMonthlyPlotGiveHistory(UUID mojangId) {
         return CompletableFuture.supplyAsync(() -> {
-            List<PlotGiveNotification> notifications = new ArrayList<>();
+            List<Long> history = new ArrayList<>();
 
             try (Connection connection = getConnection()) {
-                try (PreparedStatement query = connection.prepareStatement("SELECT * FROM plot_give_notifications WHERE mojang_id = ?;")) {
+                try (PreparedStatement query = connection.prepareStatement("SELECT time FROM monthly_plot_give_history WHERE mojang_id = ?;")) {
                     query.setString(1, mojangId.toString());
 
                     try (ResultSet result = query.executeQuery()) {
                         while (result.next()) {
-                            long timeOfPlotGive = result.getLong("time_of_plot_give");
-                            PlotGiveNotification notification = new PlotGiveNotification(mojangId, timeOfPlotGive);
+                            long time = result.getLong("time");
 
-                            notifications.add(notification);
+                            history.add(time);
                         }
                     }
                 }
@@ -57,17 +55,18 @@ public class MySQLPlotGiveHistory implements PlotGiveHistory {
                 e.printStackTrace();
             }
 
-            return notifications;
+            return history;
         });
     }
 
     @Override
-    public CompletableFuture<Void> deleteNotifications(UUID mojangId) {
+    public CompletableFuture<Void> addMonthlyPlotGive(UUID mojangId, long time) {
         return CompletableFuture.runAsync(() -> {
             try (Connection connection = getConnection()) {
-                try (PreparedStatement delete = connection.prepareStatement("DELETE FROM plot_give_notifications WHERE mojang_id = ?;")) {
-                    delete.setString(1, mojangId.toString());
-                    delete.execute();
+                try (PreparedStatement insert = connection.prepareStatement("INSERT INTO monthly_plot_give_history (mojang_id, time) VALUES (?, ?);")) {
+                    insert.setString(1, mojangId.toString());
+                    insert.setLong(2, time);
+                    insert.execute();
                 }
             } catch (SQLException e) {
                 e.printStackTrace();
@@ -75,7 +74,7 @@ public class MySQLPlotGiveHistory implements PlotGiveHistory {
         });
     }
 
-    // Close after using each time
+    // Close when done
     private Connection getConnection() {
         String jdbcUrl = "jdbc:mysql://" + host + ":" + port + "/" + database;
 

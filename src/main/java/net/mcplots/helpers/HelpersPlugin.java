@@ -1,18 +1,16 @@
 package net.mcplots.helpers;
 
-import net.mcplots.helpers.timedplots.MonthlyPlotGiveTask;
-import net.mcplots.helpers.timedplots.MySQLPlotGiveHistory;
-import net.mcplots.helpers.timedplots.PlotGiveHistory;
-import net.mcplots.helpers.timedplots.PlotGiveTask;
+import net.mcplots.helpers.plotgivetask.MonthlyPlotGiveTask;
+import net.mcplots.helpers.plotgivetask.PlotGiveTask;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class HelpersPlugin extends JavaPlugin {
 
-    private PlotGiveHistory plotGiveHistory;
+    private MonthlyPlotGiveHistory monthlyPlotGiveHistory;
     private PlotGiveTask plotGiveTask;
 
-    public PlotGiveHistory getPlotGiveHistory() {
-        return plotGiveHistory;
+    public MonthlyPlotGiveHistory getMonthlyPlotGiveHistory() {
+        return monthlyPlotGiveHistory;
     }
 
     public PlotGiveTask getPlotGiveTask() {
@@ -23,15 +21,15 @@ public class HelpersPlugin extends JavaPlugin {
     public void onEnable() {
         saveDefaultConfig();
 
-        // setup PlotGiveHistory
+        // setup MonthlyPlotGiveHistory
         {
-            String host = getConfig().getString("plot-give-history.mysql.host");
-            int port = getConfig().getInt("plot-give-history.mysql.port");
-            String database = getConfig().getString("plot-give-history.mysql.database");
-            String username = getConfig().getString("plot-give-history.mysql.username");
-            String password = getConfig().getString("plot-give-history.mysql.password");
+            String host = getConfig().getString("monthly-plot-give-history.mysql.host");
+            int port = getConfig().getInt("monthly-plot-give-history.mysql.port");
+            String database = getConfig().getString("monthly-plot-give-history.mysql.database");
+            String username = getConfig().getString("monthly-plot-give-history.mysql.username");
+            String password = getConfig().getString("monthly-plot-give-history.mysql.password");
 
-            plotGiveHistory = new MySQLPlotGiveHistory(host, port, database, username, password);
+            monthlyPlotGiveHistory = new MySQLMonthlyPlotGiveHistory(host, port, database, username, password);
         }
 
         // setup PlotGiveTask

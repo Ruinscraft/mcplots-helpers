@@ -1,4 +1,4 @@
-package net.mcplots.helpers.timedplots;
+package net.mcplots.helpers.plotgivetask;
 
 import net.mcplots.helpers.HelpersPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -18,10 +18,13 @@ public abstract class PlotGiveTask extends BukkitRunnable {
     public void run() {
         plugin.getLogger().info("Running plot give task...");
 
+        getNextRun().thenAccept(nextRun -> {
+            LocalDate now = LocalDate.now();
 
-
-
-
+            if (nextRun.isBefore(now) || nextRun.isEqual(now)) {
+                
+            }
+        });
     }
 
     public abstract CompletableFuture<LocalDate> getNextRun();
