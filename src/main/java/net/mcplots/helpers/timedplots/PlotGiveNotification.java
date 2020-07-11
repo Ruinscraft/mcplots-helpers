@@ -4,15 +4,20 @@ import java.util.UUID;
 
 public class PlotGiveNotification {
 
-    private UUID mojangId;
-    private int month;
+    private final UUID mojangId;
+    private final long timeOfPlotGive;
+
+    public PlotGiveNotification(UUID mojangId, long timeOfPlotGive) {
+        this.mojangId = mojangId;
+        this.timeOfPlotGive = timeOfPlotGive;
+    }
 
     public UUID getMojangId() {
         return mojangId;
     }
 
-    public int getMonth() {
-        return month;
+    public long getTimeOfPlotGive() {
+        return timeOfPlotGive;
     }
 
 }

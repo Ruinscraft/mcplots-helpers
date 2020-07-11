@@ -1,8 +1,6 @@
 package net.mcplots.helpers.timedplots;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -22,6 +20,19 @@ public class MySQLPlotGiveHistory implements PlotGiveHistory {
         this.database = database;
         this.username = username;
         this.password = password;
+
+        // create table
+        CompletableFuture.runAsync(() -> {
+            try (Connection connection = getConnection()) {
+                try (Statement statement = connection.createStatement()) {
+                    statement.execute("CREATE TABLE IF NOT EXISTS plot_give_notifications (" +
+                            "mojang_id VARCHAR(36) NOT NULL, " +
+                            "time_of_plot_give BIGINT NOT NULL);");
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        });
     }
 
     @Override
@@ -30,7 +41,18 @@ public class MySQLPlotGiveHistory implements PlotGiveHistory {
             List<PlotGiveNotification> notifications = new ArrayList<>();
 
             try (Connection connection = getConnection()) {
+                try (PreparedStatement query = connection.prepareStatement("SELECT * FROM plot_give_notifications WHERE mojang_id = ?;")) {
+                    query.setString(1, mojangId.toString());
 
+                    try (ResultSet result = query.executeQuery()) {
+                        while (result.next()) {
+                            long timeOfPlotGive = result.getLong("time_of_plot_give");
+                            PlotGiveNotification notification = new PlotGiveNotification(mojangId, timeOfPlotGive);
+
+                            notifications.add(notification);
+                        }
+                    }
+                }
             } catch (SQLException e) {
                 e.printStackTrace();
             }
@@ -40,15 +62,16 @@ public class MySQLPlotGiveHistory implements PlotGiveHistory {
     }
 
     @Override
-    public CompletableFuture<Void> markMonthAskNotified(UUID mojangId, int month) {
-        return CompletableFuture.supplyAsync(() -> {
+    public CompletableFuture<Void> deleteNotifications(UUID mojangId) {
+        return CompletableFuture.runAsync(() -> {
             try (Connection connection = getConnection()) {
-
+                try (PreparedStatement delete = connection.prepareStatement("DELETE FROM plot_give_notifications WHERE mojang_id = ?;")) {
+                    delete.setString(1, mojangId.toString());
+                    delete.execute();
+                }
             } catch (SQLException e) {
                 e.printStackTrace();
             }
-
-            return null;
         });
     }
 

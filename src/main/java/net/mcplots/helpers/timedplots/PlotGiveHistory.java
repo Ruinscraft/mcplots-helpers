@@ -8,6 +8,6 @@ public interface PlotGiveHistory {
 
     CompletableFuture<List<PlotGiveNotification>> getNotifications(UUID mojangId);
 
-    CompletableFuture<Void> markMonthAskNotified(UUID mojangId, int month);
+    CompletableFuture<Void> deleteNotifications(UUID mojangId);
 
 }
