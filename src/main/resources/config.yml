@@ -1,0 +1,7 @@
+plot-give-history:
+  mysql:
+    host: localhost
+    port: 3306
+    database: mcplots
+    username: root
+    password: password
