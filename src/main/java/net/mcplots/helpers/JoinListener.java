@@ -7,8 +7,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 
-import java.time.LocalDate;
-
 public class JoinListener implements Listener {
 
     private MonthlyPlotGiveHistory monthlyPlotGiveHistory;
@@ -34,10 +32,8 @@ public class JoinListener implements Listener {
 
         player.setViewDistance(8);
 
-        int month = LocalDate.now().getMonth().getValue();
-
-        monthlyPlotGiveHistory.hasRecievedPlotForMonth(player.getUniqueId(), month).thenAccept(result -> {
-           if (!result) {
+        monthlyPlotGiveHistory.hasReceievedPlotThisMonth(player.getUniqueId()).thenAccept(recvPlotThisMonth -> {
+           if (!recvPlotThisMonth) {
                if (player.isOnline()) { // check if online, because we ran this async
                    player.sendMessage(ChatColor.GREEN + "You have received an additional plot for this month for being a " + ChatColor.DARK_PURPLE + "Sponsor" + ChatColor.GREEN + "!");
                }
