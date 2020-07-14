@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
-public class MySQLMonthlyPlotGiveHistory implements MonthlyPlotGiveHistory {
+public class MySQLMonthlyPlotGiveHistory extends MonthlyPlotGiveHistory {
 
     private String host;
     private int port;

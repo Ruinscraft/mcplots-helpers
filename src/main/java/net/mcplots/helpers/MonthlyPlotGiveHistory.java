@@ -4,10 +4,18 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
-public interface MonthlyPlotGiveHistory {
+public abstract class MonthlyPlotGiveHistory {
 
-    CompletableFuture<List<Long>> getMonthlyPlotGiveHistory(UUID mojangId);
+    public abstract CompletableFuture<List<Long>> getMonthlyPlotGiveHistory(UUID mojangId);
 
-    CompletableFuture<Void> addMonthlyPlotGive(UUID mojangId, long time);
+    public abstract CompletableFuture<Void> addMonthlyPlotGive(UUID mojangId, long time);
+
+    public CompletableFuture<Boolean> hasRecievedPlotForMonth(UUID mojangId, int month) {
+        return getMonthlyPlotGiveHistory(mojangId).thenApply(result -> {
+
+
+            return false;
+        });
+    }
 
 }
