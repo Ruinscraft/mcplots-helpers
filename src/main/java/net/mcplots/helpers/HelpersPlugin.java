@@ -6,12 +6,16 @@ public class HelpersPlugin extends JavaPlugin {
 
     private MonthlyPlotGiveHistory monthlyPlotGiveHistory;
 
+    public MonthlyPlotGiveHistory getMonthlyPlotGiveHistory() {
+        return monthlyPlotGiveHistory;
+    }
+
     @Override
     public void onEnable() {
         saveDefaultConfig();
         setupMonthlyPlotGiveHistory();
 
-        getServer().getPluginManager().registerEvents(new JoinListener(monthlyPlotGiveHistory), this);
+        getServer().getPluginManager().registerEvents(new JoinListener(this), this);
     }
 
     @Override

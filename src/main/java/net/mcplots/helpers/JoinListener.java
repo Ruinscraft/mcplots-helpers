@@ -1,6 +1,5 @@
 package net.mcplots.helpers;
 
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -9,10 +8,10 @@ import org.bukkit.event.player.PlayerJoinEvent;
 
 public class JoinListener implements Listener {
 
-    private MonthlyPlotGiveHistory monthlyPlotGiveHistory;
+    private HelpersPlugin plugin;
 
-    public JoinListener(MonthlyPlotGiveHistory monthlyPlotGiveHistory) {
-        this.monthlyPlotGiveHistory = monthlyPlotGiveHistory;
+    public JoinListener(HelpersPlugin plugin) {
+        this.plugin = plugin;
     }
 
     @EventHandler
@@ -27,20 +26,24 @@ public class JoinListener implements Listener {
     private void handleSponsorJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
 
-        player.sendMessage(ChatColor.GRAY + "Thank for your " + ChatColor.DARK_PURPLE + "Sponsorship" + ChatColor.GRAY + "!");
+        player.sendMessage(ChatColor.GRAY + "Thank you for your " + ChatColor.DARK_PURPLE + "Sponsorship" + ChatColor.GRAY + "!");
         // TODO: show benefits
 
         player.setViewDistance(8);
 
-        monthlyPlotGiveHistory.hasReceievedPlotThisMonth(player.getUniqueId()).thenAccept(recvPlotThisMonth -> {
+        plugin.getMonthlyPlotGiveHistory().hasReceievedPlotThisMonth(player.getUniqueId()).thenAccept(recvPlotThisMonth -> {
            if (!recvPlotThisMonth) {
+               plugin.getLogger().info("Giving " + player.getName() + " an additional (monthly reward) plot for being a Sponsor");
+
                if (player.isOnline()) { // check if online, because we ran this async
                    player.sendMessage(ChatColor.GREEN + "You have received an additional plot for this month for being a " + ChatColor.DARK_PURPLE + "Sponsor" + ChatColor.GREEN + "!");
                }
 
-               monthlyPlotGiveHistory.addMonthlyPlotGive(player.getUniqueId(), System.currentTimeMillis());
-
-               Bukkit.dispatchCommand(Bukkit.getServer().getConsoleSender(), "plot give " + player.getName());
+               plugin.getMonthlyPlotGiveHistory().addMonthlyPlotGive(player.getUniqueId(), System.currentTimeMillis()).thenRun(() -> {
+                   plugin.getServer().getScheduler().runTask(plugin, () -> {
+                       plugin.getServer().dispatchCommand(plugin.getServer().getConsoleSender(), "plot give " + player.getName());
+                   });
+               });
            }
         });
     }
