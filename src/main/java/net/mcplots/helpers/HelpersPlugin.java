@@ -16,6 +16,7 @@ public class HelpersPlugin extends JavaPlugin {
         setupMonthlyPlotGiveHistory();
 
         getServer().getPluginManager().registerEvents(new JoinListener(this), this);
+        getServer().getPluginManager().registerEvents(new WorldListener(), this);
     }
 
     @Override
