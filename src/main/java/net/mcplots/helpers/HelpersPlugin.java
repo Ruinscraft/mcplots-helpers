@@ -17,6 +17,8 @@ public class HelpersPlugin extends JavaPlugin {
 
         getServer().getPluginManager().registerEvents(new JoinListener(this), this);
         getServer().getPluginManager().registerEvents(new WorldListener(), this);
+
+        getCommand("giveplot").setExecutor(new GivePlotCommand());
     }
 
     @Override

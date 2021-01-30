@@ -30,6 +30,13 @@
             <version>1.13.2-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>PlotSquaredV5</groupId>
+            <artifactId>PlotSquaredV5</artifactId>
+            <version>unknown</version>
+            <scope>system</scope>
+            <systemPath>${basedir}/lib/PlotSquared-Bukkit-5.13.11.jar</systemPath>
+        </dependency>
     </dependencies>
 
     <build>

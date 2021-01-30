@@ -29,7 +29,8 @@ public class JoinListener implements Listener {
         player.sendMessage(ChatColor.GRAY + "Thank you for your " + ChatColor.DARK_PURPLE + "Sponsorship" + ChatColor.GRAY + "!");
         // TODO: show benefits
 
-        player.setViewDistance(8);
+        // TODO: unsupported on 1.16
+//        player.setViewDistance(8);
 
         plugin.getMonthlyPlotGiveHistory().hasReceievedPlotThisMonth(player.getUniqueId()).thenAccept(recvPlotThisMonth -> {
            if (!recvPlotThisMonth) {
@@ -41,7 +42,8 @@ public class JoinListener implements Listener {
 
                plugin.getMonthlyPlotGiveHistory().addMonthlyPlotGive(player.getUniqueId(), System.currentTimeMillis()).thenRun(() -> {
                    plugin.getServer().getScheduler().runTask(plugin, () -> {
-                       plugin.getServer().dispatchCommand(plugin.getServer().getConsoleSender(), "plot give " + player.getName());
+                       GivePlotCommand.givePlot(player);
+//                       plugin.getServer().dispatchCommand(plugin.getServer().getConsoleSender(), "plot give " + player.getName());
                    });
                });
            }

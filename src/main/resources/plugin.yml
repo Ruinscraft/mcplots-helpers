@@ -2,6 +2,7 @@ name: ${name}
 version: ${project.version}
 main: ${mainClass}
 author: royalkingkb
-api-version: 1.13
-depend:
-  - PlotSquared # This is because we run /plot give via console
+api-version: 1.16
+commands:
+  giveplot:
+    permission: ruinscraft.command.giveplot
